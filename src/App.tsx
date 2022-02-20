@@ -7,13 +7,13 @@ const available_colors = {
 
 type AvailableColor = keyof typeof available_colors;
 
-interface ButtonProps {
+interface GameButtonProps {
   color: AvailableColor
   onClick: () => void
   isActive: boolean
 }
 
-const Button: React.FC<ButtonProps> = ({color, onClick, isActive}) => {
+const GameButton: React.FC<GameButtonProps> = ({color, onClick, isActive}) => {
   return <Box key={`${color}-button`} onClick={() => isActive ? onClick() : null}>
     <svg width="200px" height="200px">
       <circle id={color} cx="100" cy="100" r="100" fill={isActive ? `light${color}` : color}/>
@@ -40,7 +40,7 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
     {buttons.map(i => {
       const [currentButtonColor] = React.useState<AvailableColor>(Object.values(available_colors)[i] as AvailableColor)
         return <Box margin={2} key={i}>
-          <Button
+          <GameButton
             color={currentButtonColor}
             onClick={() => {
               setPoints(points + 1)
