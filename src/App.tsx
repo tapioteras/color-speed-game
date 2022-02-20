@@ -16,14 +16,18 @@ interface GameButtonProps {
 const GameButton: React.FC<GameButtonProps> = ({color, onClick, isActive}) => {
   return <Box key={`${color}-button`} onClick={() => isActive ? onClick() : null}>
     <svg width="200px" height="200px">
-      <circle id={color} cx="100" cy="100" r="100" fill={isActive ? `light${color}` : color}/>
+      <circle id={color} cx="100" cy="100" r="100" fill={isActive ? `gray` : color}/>
     </svg>
   </Box>
 }
 
 const getRandomMember = (arraySource: any[]) => arraySource[Math.floor(Math.random() * arraySource.length)]
+const max_missed = 3
 
 const generateGame = (amountOfButtons = 4, startLevel = 1) => {
+  const [lost, setLost] = React.useState(false)
+  const [missedCount, setMissedCount] = React.useState(0)
+  const [clicked, setClicked] = React.useState(false)
   const [start, setStart] = React.useState(false)
   const [activeButton, setActiveButton] = React.useState<AvailableColor>()
   const [buttons] = React.useState(Array.from(Array(amountOfButtons).keys()))
@@ -31,19 +35,33 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
   React.useEffect(() => {
     if (start) {
       const interval = setInterval(() => {
+        if (!clicked) {
+          setMissedCount(missedCount + 1)
+        }
+        if (missedCount >= max_missed) {
+          setLost(true)
+          setStart(false)
+        }
         const nextActiveButton = Object.values(available_colors)[getRandomMember(buttons)] as AvailableColor
         setActiveButton(nextActiveButton)
+        setClicked(false)
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [start]);
+  }, [start, points, clicked, missedCount]);
   return <VStack>
-    {start && <Heading>{`Points: ${points}`}</Heading>}
-    {start && <Button onClick={() => {
-      setPoints(0)
-    }}>Start over</Button>}
-    {!start && <Button onClick={() => {
+    {!start && lost && <Heading>{`You lost!`}</Heading>}
+    <Heading>{`Score: ${points}`}</Heading>
+    {start && <Heading>{`Missed: ${missedCount}/${max_missed}`}</Heading>}
+    {lost && <Button onClick={() => {
       setStart(true)
+      setPoints(0)
+      setMissedCount(0)
+    }}>Start over</Button>}
+    {!lost && <Button onClick={() => {
+      setStart(true)
+      setPoints(0)
+      setMissedCount(0)
     }}>Start</Button>}
     <Spacer />
     <Flex wrap="wrap">
@@ -53,6 +71,7 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
           <GameButton
             color={currentButtonColor}
             onClick={() => {
+              setClicked(true)
               setPoints(points + 1)
             }}
             isActive={currentButtonColor == activeButton}/>
