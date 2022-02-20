@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Box, ChakraProvider, Flex } from "@chakra-ui/react";
 
 const available_colors = {
-  red: "red", green: "green", blue: "blue", orange: "orange",
+  red: "cyan", green: "green", blue: "blue", orange: "orange",
 }
 
 type AvailableColor = keyof typeof available_colors;
@@ -11,13 +11,12 @@ interface ButtonProps {
   color: AvailableColor
   onClick: () => void
   isActive: boolean
-  key: number
 }
 
-const Button: React.FC<ButtonProps> = ({color, onClick, isActive, key}) => {
-  return <Box key={`${key}-button`} {...{onClick}}>
+const Button: React.FC<ButtonProps> = ({color, onClick, isActive}) => {
+  return <Box key={`${color}-button`} {...{onClick}}>
     <svg width="200px" height="200px">
-      <circle id="what" cx="100" cy="100" r="100" fill={isActive ? "gray" : color}/>
+      <circle id="what" cx="100" cy="100" r="100" fill={isActive ? `light${color}` : color}/>
     </svg>
   </Box>
 }
@@ -37,11 +36,10 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
   return <Flex>
     {buttons.map(i => {
       const [currentButtonColor] = React.useState<AvailableColor>(Object.values(available_colors)[i] as AvailableColor)
-        return <Box>
+        return <Box key={i}>
           <Button
-            key={i}
             color={currentButtonColor}
-            onClick={() => alert("hei")}
+            onClick={() => {}}
             isActive={currentButtonColor == activeButton}/>
         </Box>
       }
