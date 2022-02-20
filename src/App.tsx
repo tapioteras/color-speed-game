@@ -14,9 +14,9 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({color, onClick, isActive}) => {
-  return <Box key={`${color}-button`} {...{onClick}}>
+  return <Box key={`${color}-button`} onClick={() => isActive ? onClick() : null}>
     <svg width="200px" height="200px">
-      <circle id="what" cx="100" cy="100" r="100" fill={isActive ? `light${color}` : color}/>
+      <circle id={color} cx="100" cy="100" r="100" fill={isActive ? `light${color}` : color}/>
     </svg>
   </Box>
 }
@@ -36,10 +36,10 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
   }, []);
   return <VStack>
     <Heading>{`Points: ${points}`}</Heading>
-    <Flex>
+    <Flex wrap="wrap">
     {buttons.map(i => {
       const [currentButtonColor] = React.useState<AvailableColor>(Object.values(available_colors)[i] as AvailableColor)
-        return <Box key={i}>
+        return <Box margin={2} key={i}>
           <Button
             color={currentButtonColor}
             onClick={() => {
