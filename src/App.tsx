@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, Button, ChakraProvider, Flex, Heading, Spacer, VStack} from "@chakra-ui/react";
+import {Box, Button, ChakraProvider, Flex, Heading, Spacer, theme, VStack} from "@chakra-ui/react";
 
 const available_colors = {
   red: "cyan", green: "green", blue: "blue", orange: "orange",
@@ -24,19 +24,27 @@ const GameButton: React.FC<GameButtonProps> = ({color, onClick, isActive}) => {
 const getRandomMember = (arraySource: any[]) => arraySource[Math.floor(Math.random() * arraySource.length)]
 
 const generateGame = (amountOfButtons = 4, startLevel = 1) => {
+  const [start, setStart] = React.useState(false)
   const [activeButton, setActiveButton] = React.useState<AvailableColor>()
   const [buttons] = React.useState(Array.from(Array(amountOfButtons).keys()))
   const [points, setPoints] = React.useState(0)
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      const nextActiveButton = Object.values(available_colors)[getRandomMember(buttons)] as AvailableColor
-      setActiveButton(nextActiveButton)
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (start) {
+      const interval = setInterval(() => {
+        const nextActiveButton = Object.values(available_colors)[getRandomMember(buttons)] as AvailableColor
+        setActiveButton(nextActiveButton)
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [start]);
   return <VStack>
-    <Heading>{`Points: ${points}`}</Heading>
-    <Button onClick={() => {setPoints(0)}}>reset</Button>
+    {start && <Heading>{`Points: ${points}`}</Heading>}
+    {start && <Button onClick={() => {
+      setPoints(0)
+    }}>Start over</Button>}
+    {!start && <Button onClick={() => {
+      setStart(true)
+    }}>Start</Button>}
     <Spacer />
     <Flex wrap="wrap">
     {buttons.map(i => {
