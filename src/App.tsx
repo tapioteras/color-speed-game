@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, ChakraProvider, Flex, Heading, VStack} from "@chakra-ui/react";
+import {Box, Button, ChakraProvider, Flex, Heading, Spacer, VStack} from "@chakra-ui/react";
 
 const available_colors = {
   red: "cyan", green: "green", blue: "blue", orange: "orange",
@@ -36,6 +36,8 @@ const generateGame = (amountOfButtons = 4, startLevel = 1) => {
   }, []);
   return <VStack>
     <Heading>{`Points: ${points}`}</Heading>
+    <Button onClick={() => {setPoints(0)}}>reset</Button>
+    <Spacer />
     <Flex wrap="wrap">
     {buttons.map(i => {
       const [currentButtonColor] = React.useState<AvailableColor>(Object.values(available_colors)[i] as AvailableColor)
